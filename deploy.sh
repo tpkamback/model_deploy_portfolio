@@ -1,11 +1,6 @@
 #!/bin/bash
 
-if [ -f .env ]; then
-    export $(grep -v '^#' .env | xargs)
-else
-    echo ".env file not found!"
-    exit 1
-fi
+source ./set_env.sh
 
 echo "Setting GCP project to $PROJECT_ID"
 echo "Setting Cloud Functions region to $REGION"
@@ -22,7 +17,7 @@ gcloud functions deploy update_model \
     --source deploy/ \
     --region "$REGION" \
     --quiet \
-    --set-env-vars BUCKET_NAME=$BUCKET_NAME
+    --set-env-vars BUCKET_NAME=$BUCKET_NAME,PROJECT_ID=$PROJECT_ID,REGION=$REGION
 
 echo "Creating Cloud Scheduler job 'daily-model-update'"
 gcloud scheduler jobs create http daily-model-update \
