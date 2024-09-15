@@ -1,12 +1,25 @@
 import os
 import yfinance as yf
-from google.cloud import storage
+from google.cloud import storage, aiplatform
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.metrics import accuracy_score
 import joblib
 
-def update_model(request):
+project_id = os.environ.get('PROJECT_ID')
+bucket_name = os.environ.get('BUCKET_NAME')
+region = os.environ.get('REGION')
+
+def deploy_model():
+    aiplatform.init(project=project_id, location=region)
+    model = aiplatform.Model.upload(
+        display_name='decision-tree-model',
+        artifact_uri='gs://' + bucket_name + '/latest/',
+        serving_container_image_uri='us-docker.pkg.dev/vertex-ai/prediction/sklearn-cpu.0-24:latest',
+    )
+    model.deploy(machine_type='n1-standard-2')
+
+def update_model():
     ticker = 'GOOGL'
     google_stock = yf.Ticker(ticker)
     stock_data = google_stock.history(period='1y')
@@ -36,4 +49,9 @@ def update_model(request):
     blob = bucket.blob('latest/model.joblib')
     blob.upload_from_filename(model_filename)
 
+    deploy_model()
+
     return f'Model updated and accuracy is {accuracy:.2f}'
+
+if __name__ == "__main__":
+    update_model()
