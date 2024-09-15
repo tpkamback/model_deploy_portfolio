@@ -1,0 +1,4 @@
+export PROJECT_ID="your-project-id"
+export REGION="your_region"
+export BUCKET_NAME="your_bucket_name"
+export GOOGLE_APPLICATION_CREDENTIALS="your_json_path"
