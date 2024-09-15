@@ -24,12 +24,12 @@ gcloud functions deploy update_model \
     --quiet \
     --set-env-vars BUCKET_NAME=$BUCKET_NAME
 
-# Cloud Schedulerの設定
-# echo "Creating Cloud Scheduler job 'daily-model-update'"
-# gcloud scheduler jobs create http daily-model-update \
-#     --schedule "0 9 * * *" \
-#     --uri "https://${REGION}-${PROJECT_ID}.cloudfunctions.net/update_model" \
-#     --http-method GET \
-#     --time-zone "Asia/Tokyo"
+echo "Creating Cloud Scheduler job 'daily-model-update'"
+gcloud scheduler jobs create http daily-model-update \
+    --schedule "0 9 * * *" \
+    --uri "https://${REGION}-${PROJECT_ID}.cloudfunctions.net/update_model" \
+    --http-method GET \
+    --time-zone "Asia/Tokyo" \
+    --location "${REGION}"
 
 echo "Deployment completed successfully."
