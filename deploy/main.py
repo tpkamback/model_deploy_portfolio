@@ -1,3 +1,4 @@
+import os
 import yfinance as yf
 from google.cloud import storage
 from sklearn.model_selection import train_test_split
@@ -31,7 +32,7 @@ def update_model(request):
     joblib.dump(clf, model_filename)
     
     storage_client = storage.Client()
-    bucket = storage_client.get_bucket('my-portfolio-bucket20240909')
+    bucket = storage_client.get_bucket(os.environ.get('BUCKET_NAME'))
     blob = bucket.blob('latest/model.joblib')
     blob.upload_from_filename(model_filename)
 
