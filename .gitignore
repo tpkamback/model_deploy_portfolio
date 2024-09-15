@@ -1,2 +1,5 @@
 # Environment variables
 set_env.sh
+
+# Ignore all JSON files in the keys directory
+keys/*.json
